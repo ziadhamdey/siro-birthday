@@ -256,25 +256,22 @@
         z-index: 50;
       }
 
-      /* ================= Video / Image Container ================= */
       .video-wrapper {
         position: relative;
-        width: 100%; /* Fixed fixed-width issue */
+        width: 100%;
         max-width: 600px;
         margin: 0 auto;
-        aspect-ratio: 16/9;
+        /* شلنا الـ aspect-ratio عشان الحاوية تاخد أبعاد الصورة الأصلية */
         border-radius: 20px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: 0 0 40px rgba(129, 140, 248, 0.2);
       }
+
       .video-wrapper img {
         width: 100%;
-        height: 100%; /* Fixed height issue */
-        object-fit: cover; /* Ensures image covers area beautifully */
-        position: absolute;
-        top: 0;
-        left: 0;
+        height: auto; /* عشان الصورة تحافظ على أبعادها بدون ما تتمط */
+        display: block; /* عشان نمنع أي مسافات بيضاء تحت الصورة */
       }
 
       /* ================= MOBILE RESPONSIVENESS ================= */
