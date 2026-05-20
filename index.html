@@ -27,7 +27,7 @@
         background-color: var(--bg-color);
         color: var(--text-main);
         overflow: hidden;
-        cursor: none; /* We will use custom cursor */
+        cursor: none;
       }
 
       /* ================= Custom Cursor ================= */
@@ -54,16 +54,6 @@
           width 0.2s,
           height 0.2s,
           background-color 0.2s;
-      }
-      /* Disable custom cursor on mobile */
-      @media (max-width: 768px) {
-        body {
-          cursor: auto;
-        }
-        .cursor-dot,
-        .cursor-outline {
-          display: none;
-        }
       }
 
       /* ================= Ambient Background ================= */
@@ -109,6 +99,8 @@
         border-radius: 100px;
         backdrop-filter: blur(20px);
         z-index: 100;
+        width: max-content;
+        max-width: 95vw;
       }
       .nav-btn {
         background: transparent;
@@ -122,6 +114,7 @@
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
         overflow: hidden;
+        white-space: nowrap;
       }
       .nav-btn:hover {
         color: var(--text-main);
@@ -143,7 +136,6 @@
         align-items: center;
         justify-content: center;
         z-index: 10;
-        /* The Magic Trick: Clip Path transition */
         clip-path: circle(0% at 50% 50%);
         transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
         visibility: hidden;
@@ -158,20 +150,21 @@
       /* Content staggered animation inside active section */
       .content-wrapper {
         text-align: center;
-        width: max-content;
+        width: 100%; /* Fixed the max-content issue */
+        max-width: 800px;
+        padding: 0 15px; /* Added padding for mobile edges */
         transform: translateY(40px);
         opacity: 0;
         transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
-        max-width: 800px;
       }
       .section.active .content-wrapper {
         transform: translateY(0);
         opacity: 1;
       }
 
-      /* ================= Typography ================= */
+      /* ================= Typography Classes (Responsive) ================= */
       .huge-title {
-        font-size: clamp(6rem, 15vw, 12rem);
+        font-size: clamp(5rem, 15vw, 12rem);
         font-weight: 900;
         line-height: 1;
         background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
@@ -181,10 +174,20 @@
         letter-spacing: -2px;
       }
       .subtitle {
-        font-size: clamp(1.2rem, 3vw, 2rem);
+        font-size: clamp(1rem, 3vw, 1.5rem);
         font-weight: 300;
         color: var(--text-muted);
         line-height: 1.6;
+      }
+      .sec-heading {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--accent-1);
+      }
+      .surprise-heading {
+        font-size: 4rem;
+        color: var(--accent-1);
+        margin-bottom: 10px;
       }
 
       /* ================= Glass Card ================= */
@@ -200,16 +203,20 @@
       /* ================= 3D Photo Frame ================= */
       .photo-container {
         display: flex;
+        gap: 20px; /* Added gap between the two photos */
+        justify-content: center;
+        align-items: center;
         perspective: 1000px;
         width: 100%;
-        max-width: 400px;
+        max-width: 700px; /* Increased to fit 2 photos side by side on desktop */
+        margin: 0 auto;
       }
       .photo-frame {
-        width: 100%;
+        flex: 1; /* Make both images take equal space */
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         transform-style: preserve-3d;
-        transition: transform 0.1s ease-out; /* Controlled by JS */
+        transition: transform 0.1s ease-out;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
       }
       .photo-frame img {
@@ -217,7 +224,7 @@
         height: auto;
         border-radius: 20px;
         display: block;
-        transform: translateZ(30px); /* Pops out slightly in 3D */
+        transform: translateZ(30px);
       }
 
       /* ================= Surprise Button ================= */
@@ -225,8 +232,8 @@
         background: transparent;
         border: 1px solid var(--accent-1);
         color: var(--accent-1);
-        padding: 20px 50px;
-        font-size: 1.5rem;
+        padding: 15px 40px;
+        font-size: 1.2rem;
         border-radius: 100px;
         cursor: pointer;
         position: relative;
@@ -249,11 +256,12 @@
         z-index: 50;
       }
 
-      /* ================= Video Container ================= */
+      /* ================= Video / Image Container ================= */
       .video-wrapper {
         position: relative;
-        width: 290px;
-        max-width: 800px;
+        width: 100%; /* Fixed fixed-width issue */
+        max-width: 600px;
+        margin: 0 auto;
         aspect-ratio: 16/9;
         border-radius: 20px;
         overflow: hidden;
@@ -261,11 +269,68 @@
         box-shadow: 0 0 40px rgba(129, 140, 248, 0.2);
       }
       .video-wrapper img {
-        /* width: 100%; */
-        height: 70px;
+        width: 100%;
+        height: 100%; /* Fixed height issue */
+        object-fit: cover; /* Ensures image covers area beautifully */
         position: absolute;
         top: 0;
         left: 0;
+      }
+
+      /* ================= MOBILE RESPONSIVENESS ================= */
+      @media (max-width: 768px) {
+        body {
+          cursor: auto;
+        }
+        .cursor-dot,
+        .cursor-outline {
+          display: none;
+        }
+
+        /* Adjust Glass Card Padding */
+        .glass-card {
+          padding: 1.5rem;
+        }
+
+        /* Adjust Typography */
+        .sec-heading {
+          font-size: 2rem;
+        }
+        .surprise-heading {
+          font-size: 2.5rem;
+        }
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        /* Navigation Dock Mobile Fixes */
+        .nav-dock {
+          bottom: 15px;
+          padding: 6px;
+          gap: 4px;
+          justify-content: space-between;
+          overflow-x: auto; /* Allow scrolling if screen is too tiny */
+          border-radius: 15px;
+        }
+        /* Hide scrollbar for dock but keep it scrollable */
+        .nav-dock::-webkit-scrollbar {
+          display: none;
+        }
+        .nav-btn {
+          padding: 8px 12px;
+          font-size: 0.85rem;
+        }
+
+        /* Photo Layout Mobile Fixes */
+        .photo-container {
+          flex-direction: column; /* Stack images vertically on mobile */
+          gap: 15px;
+          max-height: 55vh; /* Keep them contained so they don't push nav */
+        }
+        .photo-frame {
+          width: 80%; /* Don't let them touch screen edges */
+          margin: 0 auto;
+        }
       }
     </style>
   </head>
@@ -290,12 +355,8 @@
     <!-- Section 2: Words -->
     <section class="section" id="sec-2">
       <div class="content-wrapper glass-card">
-        <h2
-          style="font-size: 2.5rem; margin-bottom: 20px; color: var(--accent-1)"
-        >
-          Siro
-        </h2>
-        <p class="subtitle" style="font-size: 1.2rem">
+        <h2 class="sec-heading">Siro</h2>
+        <p class="subtitle">
           مش قادر اوصف سعادتي بوجودك في حياتي. الحياة بقالها 19 سنة فيها الجمال
           ده كله وكل سنة بتعدي بيزيد كمان يقيني بأنك الصدفة الأجمل والأحلى في
           حياتي. حقيقي زي ما قولت "سحارة عيونك كالبن حسنها لكن رأيتها عقلي صبابة
@@ -308,22 +369,22 @@
     <section class="section" id="sec-3">
       <div class="content-wrapper">
         <div class="photo-container" id="tilt-container">
-          <div class="photo-frame" id="tilt-element">
-            <!-- ضع رابط صورتكم هنا -->
+          <div class="photo-frame" id="tilt-element-1">
+            <!-- صورتكم الأولى -->
             <img
               src="./21ac8134-5402-47d5-aa27-571d72602baa.JPG"
-              alt="صورتنا"
+              alt="صورتنا 1"
             />
           </div>
-          <div class="photo-frame" id="tilt-element">
-            <!-- ضع رابط صورتكم هنا -->
+          <div class="photo-frame" id="tilt-element-2">
+            <!-- صورتكم الثانية -->
             <img
               src="./103cbb43-a39c-4a77-99ec-20ca8aa857b2.JPG"
-              alt="صورتنا"
+              alt="صورتنا 2"
             />
           </div>
         </div>
-        <p class="subtitle" style="margin-top: 30px">دي بقا أجمل حاجه حصلتلي</p>
+        <p class="subtitle" style="margin-top: 20px">دي بقا أجمل حاجه حصلتلي</p>
       </div>
     </section>
 
@@ -331,7 +392,7 @@
     <section class="section" id="sec-4">
       <div class="content-wrapper">
         <div id="surprise-trigger">
-          <p class="subtitle" style="margin-bottom: 30px">في سر صغير هنا..</p>
+          <p class="subtitle" style="margin-bottom: 20px">في سر صغير هنا..</p>
           <button class="magic-btn" onclick="triggerMagic()">
             اضغطي هنا للسر
           </button>
@@ -340,26 +401,21 @@
           id="surprise-content"
           style="display: none; opacity: 0; transition: opacity 1s"
         >
-          <h2
-            style="font-size: 4rem; color: var(--accent-1); margin-bottom: 10px"
-          >
-            بحبك جداً! ♥
-          </h2>
+          <h2 class="surprise-heading">بحبك جداً! ♥</h2>
           <p class="subtitle">كل سنة وأنتِ النور اللي منور حياتي</p>
         </div>
       </div>
     </section>
 
-    <!-- Section 5: Video -->
+    <!-- Section 5: Video / Image -->
     <section class="section" id="sec-5">
       <div class="content-wrapper">
-        <h2
-          style="font-size: 2rem; margin-bottom: 30px; color: var(--accent-2)"
-        >
-          لسرسورتي
-        </h2>
+        <h2 class="sec-heading" style="color: var(--accent-2)">لسرسورتي</h2>
         <div class="video-wrapper">
-          <img src="./Screenshot 2026-05-21 at 12.31.03 AM.png" alt="صورتنا" />
+          <img
+            src="./Screenshot 2026-05-21 at 12.31.03 AM.png"
+            alt="لسرسورتي"
+          />
         </div>
       </div>
     </section>
@@ -378,47 +434,42 @@
       const cursorDot = document.querySelector(".cursor-dot");
       const cursorOutline = document.querySelector(".cursor-outline");
 
-      window.addEventListener("mousemove", (e) => {
-        const posX = e.clientX;
-        const posY = e.clientY;
+      // Only run cursor logic if not on mobile
+      if (window.innerWidth > 768) {
+        window.addEventListener("mousemove", (e) => {
+          const posX = e.clientX;
+          const posY = e.clientY;
 
-        cursorDot.style.left = `${posX}px`;
-        cursorDot.style.top = `${posY}px`;
+          cursorDot.style.left = `${posX}px`;
+          cursorDot.style.top = `${posY}px`;
 
-        // Add a slight delay to the outline for a smooth trailing effect
-        cursorOutline.animate(
-          {
-            left: `${posX}px`,
-            top: `${posY}px`,
-          },
-          { duration: 500, fill: "forwards" },
-        );
-      });
-
-      // Add hover effect to interactive elements
-      document.querySelectorAll("button").forEach((btn) => {
-        btn.addEventListener("mouseenter", () => {
-          cursorOutline.style.transform = "translate(-50%, -50%) scale(1.5)";
-          cursorOutline.style.backgroundColor = "rgba(232, 121, 249, 0.1)";
+          cursorOutline.animate(
+            { left: `${posX}px`, top: `${posY}px` },
+            { duration: 500, fill: "forwards" },
+          );
         });
-        btn.addEventListener("mouseleave", () => {
-          cursorOutline.style.transform = "translate(-50%, -50%) scale(1)";
-          cursorOutline.style.backgroundColor = "transparent";
+
+        document.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("mouseenter", () => {
+            cursorOutline.style.transform = "translate(-50%, -50%) scale(1.5)";
+            cursorOutline.style.backgroundColor = "rgba(232, 121, 249, 0.1)";
+          });
+          btn.addEventListener("mouseleave", () => {
+            cursorOutline.style.transform = "translate(-50%, -50%) scale(1)";
+            cursorOutline.style.backgroundColor = "transparent";
+          });
         });
-      });
+      }
 
       /* ================= 2. Navigation Logic ================= */
       function goToSection(num) {
-        // Update buttons
         document.querySelectorAll(".nav-btn").forEach((btn, index) => {
           btn.classList.toggle("active", index + 1 === num);
         });
 
-        // Update sections with Clip-path logic
         document.querySelectorAll(".section").forEach((sec, index) => {
           if (index + 1 === num) {
             sec.classList.add("active");
-            // Reset surprise if navigating away
             if (num !== 4) resetMagic();
           } else {
             sec.classList.remove("active");
@@ -428,25 +479,32 @@
 
       /* ================= 3. Vanilla 3D Tilt Effect ================= */
       const tiltContainer = document.getElementById("tilt-container");
-      const tiltElement = document.getElementById("tilt-element");
 
-      tiltContainer.addEventListener("mousemove", (e) => {
-        const rect = tiltContainer.getBoundingClientRect();
-        const x = e.clientX - rect.left; // x position within the element.
-        const y = e.clientY - rect.top; // y position within the element.
+      // Select all photo frames to apply tilt to both
+      const tiltElements = document.querySelectorAll(".photo-frame");
 
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+      if (window.innerWidth > 768) {
+        tiltContainer.addEventListener("mousemove", (e) => {
+          const rect = tiltContainer.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
 
-        const rotateX = ((y - centerY) / centerY) * -15; // Max rotation 15deg
-        const rotateY = ((x - centerX) / centerX) * 15;
+          const rotateX = ((y - centerY) / centerY) * -10;
+          const rotateY = ((x - centerX) / centerX) * 10;
 
-        tiltElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-      });
+          tiltElements.forEach((el) => {
+            el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          });
+        });
 
-      tiltContainer.addEventListener("mouseleave", () => {
-        tiltElement.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-      });
+        tiltContainer.addEventListener("mouseleave", () => {
+          tiltElements.forEach((el) => {
+            el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+          });
+        });
+      }
 
       /* ================= 4. Native Canvas Particle System (Surprise) ================= */
       const canvas = document.getElementById("canvas-confetti");
@@ -466,13 +524,12 @@
           this.x = x;
           this.y = y;
           this.color = color;
-          // Random velocity in all directions
           const angle = Math.random() * Math.PI * 2;
           const speed = Math.random() * 15 + 5;
           this.vx = Math.cos(angle) * speed;
           this.vy = Math.sin(angle) * speed;
           this.radius = Math.random() * 4 + 2;
-          this.life = 1; // 1 to 0
+          this.life = 1;
           this.decay = Math.random() * 0.02 + 0.01;
           this.gravity = 0.3;
         }
@@ -491,7 +548,6 @@
       }
 
       function triggerMagic() {
-        // Hide trigger, show message
         document.getElementById("surprise-trigger").style.display = "none";
         const content = document.getElementById("surprise-content");
         content.style.display = "block";
@@ -499,7 +555,6 @@
           content.style.opacity = "1";
         }, 50);
 
-        // Create explosion
         const colors = ["232, 121, 249", "129, 140, 248", "255, 255, 255"];
         const startX = window.innerWidth / 2;
         const startY = window.innerHeight / 2;
@@ -518,7 +573,6 @@
           particles[i].update();
           particles[i].draw();
         }
-        // Remove dead particles
         particles = particles.filter((p) => p.life > 0);
 
         if (particles.length > 0) {
