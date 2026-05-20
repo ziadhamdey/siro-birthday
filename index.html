@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 19 | Premium</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ================= Core Variables & Reset ================= */
+      :root {
+        --bg-color: #030303;
+        --text-main: #ffffff;
+        --text-muted: #888888;
+        --accent-1: #e879f9; /* Pink/Purple */
+        --accent-2: #818cf8; /* Indigo */
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Cairo", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        overflow: hidden;
+        cursor: none; /* We will use custom cursor */
+      }
+
+      /* ================= Custom Cursor ================= */
+      .cursor-dot,
+      .cursor-outline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+      }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent-1);
+      }
+      .cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(232, 121, 249, 0.5);
+        transition:
+          width 0.2s,
+          height 0.2s,
+          background-color 0.2s;
+      }
+      /* Disable custom cursor on mobile */
+      @media (max-width: 768px) {
+        body {
+          cursor: auto;
+        }
+        .cursor-dot,
+        .cursor-outline {
+          display: none;
+        }
+      }
+
+      /* ================= Ambient Background ================= */
+      .ambient-light {
+        position: absolute;
+        width: 50vw;
+        height: 50vw;
+        background: radial-gradient(
+          circle,
+          rgba(232, 121, 249, 0.08) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        filter: blur(50px);
+        z-index: 0;
+        animation: pulse 8s infinite alternate;
+      }
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.5);
+          opacity: 1;
+        }
+      }
+
+      /* ================= Navigation Dock ================= */
+      .nav-dock {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 8px;
+        border-radius: 100px;
+        backdrop-filter: blur(20px);
+        z-index: 100;
+      }
+      .nav-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-weight: 700;
+        padding: 10px 24px;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .nav-btn:hover {
+        color: var(--text-main);
+      }
+      .nav-btn.active {
+        color: var(--bg-color);
+        background: var(--text-main);
+      }
+
+      /* ================= Sections & Transitions ================= */
+      .section {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        /* The Magic Trick: Clip Path transition */
+        clip-path: circle(0% at 50% 50%);
+        transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+        visibility: hidden;
+        padding: 20px;
+      }
+      .section.active {
+        clip-path: circle(150% at 50% 50%);
+        visibility: visible;
+        z-index: 20;
+      }
+
+      /* Content staggered animation inside active section */
+      .content-wrapper {
+        text-align: center;
+        transform: translateY(40px);
+        opacity: 0;
+        transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+        max-width: 800px;
+      }
+      .section.active .content-wrapper {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* ================= Typography ================= */
+      .huge-title {
+        font-size: clamp(6rem, 15vw, 12rem);
+        font-weight: 900;
+        line-height: 1;
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+      }
+      .subtitle {
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        font-weight: 300;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      /* ================= Glass Card ================= */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 3rem;
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      /* ================= 3D Photo Frame ================= */
+      .photo-container {
+        display: flex;
+        perspective: 1000px;
+        width: 100%;
+        max-width: 400px;
+      }
+      .photo-frame {
+        width: 100%;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transform-style: preserve-3d;
+        transition: transform 0.1s ease-out; /* Controlled by JS */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      }
+      .photo-frame img {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+        display: block;
+        transform: translateZ(30px); /* Pops out slightly in 3D */
+      }
+
+      /* ================= Surprise Button ================= */
+      .magic-btn {
+        background: transparent;
+        border: 1px solid var(--accent-1);
+        color: var(--accent-1);
+        padding: 20px 50px;
+        font-size: 1.5rem;
+        border-radius: 100px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+        font-family: inherit;
+      }
+      .magic-btn:hover {
+        background: var(--accent-1);
+        color: #000;
+        box-shadow: 0 0 30px rgba(232, 121, 249, 0.5);
+      }
+      #canvas-confetti {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+      }
+
+      /* ================= Video Container ================= */
+      .video-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        aspect-ratio: 16/9;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 40px rgba(129, 140, 248, 0.2);
+      }
+      .video-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <div class="ambient-light"></div>
+
+    <!-- Canvas for Native Particle Effect -->
+    <canvas id="canvas-confetti"></canvas>
+
+    <!-- Section 1: Hero -->
+    <section class="section active" id="sec-1">
+      <div class="content-wrapper">
+        <div class="huge-title">19</div>
+        <p class="subtitle">بداية عام جديد لأجمل حاجه حصلتلي في حياتي</p>
+      </div>
+    </section>
+
+    <!-- Section 2: Words -->
+    <section class="section" id="sec-2">
+      <div class="content-wrapper glass-card">
+        <h2
+          style="font-size: 2.5rem; margin-bottom: 20px; color: var(--accent-1)"
+        >
+          Siro
+        </h2>
+        <p class="subtitle" style="font-size: 1.2rem">
+          مش قادر اوصف سعادتي بوجودك في حياتي. الحياة بقالها 19 سنة فيها الجمال
+          ده كله وكل سنة بتعدي بيزيد كمان يقيني بأنك الصدفة الأجمل والأحلى في
+          حياتي. حقيقي زي ما قولت "سحارة عيونك كالبن حسنها لكن رأيتها عقلي صبابة
+          أثمل"
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Photo with Vanilla 3D Tilt -->
+    <section class="section" id="sec-3">
+      <div class="content-wrapper">
+        <div class="photo-container" id="tilt-container">
+          <div class="photo-frame" id="tilt-element">
+            <!-- ضع رابط صورتكم هنا -->
+            <img
+              src="./21ac8134-5402-47d5-aa27-571d72602baa.JPG"
+              alt="صورتنا"
+            />
+          </div>
+          <div class="photo-frame" id="tilt-element">
+            <!-- ضع رابط صورتكم هنا -->
+            <img
+              src="./103cbb43-a39c-4a77-99ec-20ca8aa857b2.JPG"
+              alt="صورتنا"
+            />
+          </div>
+        </div>
+        <p class="subtitle" style="margin-top: 30px">دي بقا أجمل حاجه حصلتلي</p>
+      </div>
+    </section>
+
+    <!-- Section 4: Surprise -->
+    <section class="section" id="sec-4">
+      <div class="content-wrapper">
+        <div id="surprise-trigger">
+          <p class="subtitle" style="margin-bottom: 30px">في سر صغير هنا..</p>
+          <button class="magic-btn" onclick="triggerMagic()">
+            اضغطي هنا للسر
+          </button>
+        </div>
+        <div
+          id="surprise-content"
+          style="display: none; opacity: 0; transition: opacity 1s"
+        >
+          <h2
+            style="font-size: 4rem; color: var(--accent-1); margin-bottom: 10px"
+          >
+            بحبك جداً! ♥
+          </h2>
+          <p class="subtitle">كل سنة وأنتِ النور اللي منور حياتي</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Video -->
+    <section class="section" id="sec-5">
+      <div class="content-wrapper">
+        <h2
+          style="font-size: 2rem; margin-bottom: 30px; color: var(--accent-2)"
+        >
+          لسرسورتي
+        </h2>
+        <div class="video-wrapper">
+          <iframe
+            src="https://www.youtube.com/embed/uZc18nQAEnc?si=7vKM39BMhwihP6nR"
+            title="YouTube video player"
+            frameborder="0"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dock Navigation -->
+    <nav class="nav-dock">
+      <button class="nav-btn active" onclick="goToSection(1)">19</button>
+      <button class="nav-btn" onclick="goToSection(2)">كلماتي</button>
+      <button class="nav-btn" onclick="goToSection(3)">حياة قلبي</button>
+      <button class="nav-btn" onclick="goToSection(4)">السر</button>
+      <button class="nav-btn" onclick="goToSection(5)">اسمعي كده</button>
+    </nav>
+
+    <script>
+      /* ================= 1. Custom Cursor Logic ================= */
+      const cursorDot = document.querySelector(".cursor-dot");
+      const cursorOutline = document.querySelector(".cursor-outline");
+
+      window.addEventListener("mousemove", (e) => {
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+
+        // Add a slight delay to the outline for a smooth trailing effect
+        cursorOutline.animate(
+          {
+            left: `${posX}px`,
+            top: `${posY}px`,
+          },
+          { duration: 500, fill: "forwards" },
+        );
+      });
+
+      // Add hover effect to interactive elements
+      document.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("mouseenter", () => {
+          cursorOutline.style.transform = "translate(-50%, -50%) scale(1.5)";
+          cursorOutline.style.backgroundColor = "rgba(232, 121, 249, 0.1)";
+        });
+        btn.addEventListener("mouseleave", () => {
+          cursorOutline.style.transform = "translate(-50%, -50%) scale(1)";
+          cursorOutline.style.backgroundColor = "transparent";
+        });
+      });
+
+      /* ================= 2. Navigation Logic ================= */
+      function goToSection(num) {
+        // Update buttons
+        document.querySelectorAll(".nav-btn").forEach((btn, index) => {
+          btn.classList.toggle("active", index + 1 === num);
+        });
+
+        // Update sections with Clip-path logic
+        document.querySelectorAll(".section").forEach((sec, index) => {
+          if (index + 1 === num) {
+            sec.classList.add("active");
+            // Reset surprise if navigating away
+            if (num !== 4) resetMagic();
+          } else {
+            sec.classList.remove("active");
+          }
+        });
+      }
+
+      /* ================= 3. Vanilla 3D Tilt Effect ================= */
+      const tiltContainer = document.getElementById("tilt-container");
+      const tiltElement = document.getElementById("tilt-element");
+
+      tiltContainer.addEventListener("mousemove", (e) => {
+        const rect = tiltContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element.
+        const y = e.clientY - rect.top; // y position within the element.
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -15; // Max rotation 15deg
+        const rotateY = ((x - centerX) / centerX) * 15;
+
+        tiltElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      tiltContainer.addEventListener("mouseleave", () => {
+        tiltElement.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+
+      /* ================= 4. Native Canvas Particle System (Surprise) ================= */
+      const canvas = document.getElementById("canvas-confetti");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      let animationId;
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      class Particle {
+        constructor(x, y, color) {
+          this.x = x;
+          this.y = y;
+          this.color = color;
+          // Random velocity in all directions
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 15 + 5;
+          this.vx = Math.cos(angle) * speed;
+          this.vy = Math.sin(angle) * speed;
+          this.radius = Math.random() * 4 + 2;
+          this.life = 1; // 1 to 0
+          this.decay = Math.random() * 0.02 + 0.01;
+          this.gravity = 0.3;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += this.gravity;
+          this.life -= this.decay;
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${this.color}, ${this.life})`;
+          ctx.fill();
+        }
+      }
+
+      function triggerMagic() {
+        // Hide trigger, show message
+        document.getElementById("surprise-trigger").style.display = "none";
+        const content = document.getElementById("surprise-content");
+        content.style.display = "block";
+        setTimeout(() => {
+          content.style.opacity = "1";
+        }, 50);
+
+        // Create explosion
+        const colors = ["232, 121, 249", "129, 140, 248", "255, 255, 255"];
+        const startX = window.innerWidth / 2;
+        const startY = window.innerHeight / 2;
+
+        for (let i = 0; i < 150; i++) {
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          particles.push(new Particle(startX, startY, color));
+        }
+
+        animateParticles();
+      }
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          particles[i].update();
+          particles[i].draw();
+        }
+        // Remove dead particles
+        particles = particles.filter((p) => p.life > 0);
+
+        if (particles.length > 0) {
+          animationId = requestAnimationFrame(animateParticles);
+        }
+      }
+
+      function resetMagic() {
+        document.getElementById("surprise-trigger").style.display = "block";
+        const content = document.getElementById("surprise-content");
+        content.style.display = "none";
+        content.style.opacity = "0";
+        particles = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cancelAnimationFrame(animationId);
+      }
+    </script>
+  </body>
+</html>
