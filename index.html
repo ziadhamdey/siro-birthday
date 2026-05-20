@@ -268,7 +268,7 @@
         box-shadow: 0 0 40px rgba(129, 140, 248, 0.2);
       }
 
-      .video-wrapper img {
+      .video-wrapper iframe {
         width: 100%;
         height: auto; /* عشان الصورة تحافظ على أبعادها بدون ما تتمط */
         display: block; /* عشان نمنع أي مسافات بيضاء تحت الصورة */
@@ -409,10 +409,24 @@
       <div class="content-wrapper">
         <h2 class="sec-heading" style="color: var(--accent-2)">لسرسورتي</h2>
         <div class="video-wrapper">
-          <img
-            src="./Screenshot 2026-05-21 at 12.31.03 AM.png"
-            alt="لسرسورتي"
-          />
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/uZc18nQAEnc?si=XSpRTu6h7pOFwqli"
+            title="YouTube video player"
+            frameborder="0"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
         </div>
       </div>
     </section>
